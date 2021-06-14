@@ -3,6 +3,9 @@ package homepage;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import static org.hamcrest.Matchers.is;
+
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import base.BaseTests;
@@ -24,6 +27,7 @@ public class HomePageTests extends BaseTests {
 		
 	}
 	
+	ProdutoPage produtoPage;
 	@Test
 	public void testValidarDetalhesDoProduto_DescricaoEValorIguais() {
 		int indice = 0;
@@ -33,7 +37,7 @@ public class HomePageTests extends BaseTests {
 		System.out.println(nomeProduto_HomePage);
 		System.out.println(precoProduto_HomePage);
 		
-		ProdutoPage produtoPage = homePage.clicarProduto(indice);
+		produtoPage = homePage.clicarProduto(indice);
 		String nomeProduto_ProdutoPage = produtoPage.obterNomeProduto();
 		String precoProduto_ProdutoPage = produtoPage.obterPrecoProduto();
 		
@@ -45,18 +49,50 @@ public class HomePageTests extends BaseTests {
 		
 	}
 	
+	LoginPage loginPage;
 	@Test
 	public void testLoginComSucesso_UsuarioLogado() {
-		//Clicar no botão Sign In na home page
-		LoginPage loginPage =  homePage.clicarBotaoSignIn();
-		//Preencher usuario e senha
+		loginPage =  homePage.clicarBotaoSignIn();
 		loginPage.preencherEmail("cassia@teste.com");
 		loginPage.preencherPassword("123456");
-		//Clicar no botão Sign In para logar
 		loginPage.clicarBotaoSignIn();
-		//Validar se o usurio está logado
 		assertThat(homePage.estarLogado("Cassia Souza"), is(true));
+		carregarPaginaInicial();
 	}
+	
+	@Test
+	public void incluirProdutoNoCarrinho_ProdutoIncluidoComSucesso() {
+		//Pré-condição: usuario logado
+		if(!homePage.estarLogado("Cassia Souza")) {
+			testLoginComSucesso_UsuarioLogado();
+		}
+		//Teste
+		//Selecionando produto
+		testValidarDetalhesDoProduto_DescricaoEValorIguais();
+		//Selecionando o tamanho
+		List<String> listaOpcoes = produtoPage.obterOpcoesSelecionadas();
+		System.out.println("Opção selecionada é: " + listaOpcoes.get(0));
+		System.out.println("Tamanho da lista: " + listaOpcoes.size());
+		produtoPage.selecionarOpcaoDropDown("M");
+		
+		listaOpcoes = produtoPage.obterOpcoesSelecionadas();
+		System.out.println("Opção selecionada é: " + listaOpcoes.get(0));
+		System.out.println("Tamanho da lista: " + listaOpcoes.size());
+		
+		//Selecionando cor
+		produtoPage.selecionarCorPreta();
+		
+		//Selecionando quantidade
+		produtoPage.alterarQuantidade(2);
+		
+		//Adicionando no carrinho
+		
+	}
+	
+	
+	
+	
+	
 }
 
 
