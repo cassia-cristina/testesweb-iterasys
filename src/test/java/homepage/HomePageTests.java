@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import base.BaseTests;
+import pages.CarrinhoPage;
 import pages.LoginPage;
 import pages.ModalProdutoPage;
 import pages.ProdutoPage;
@@ -54,7 +55,6 @@ public class HomePageTests extends BaseTests {
 	}
 	
 	LoginPage loginPage;
-	ModalProdutoPage modalProdutoPage;
 	@Test
 	public void testLoginComSucesso_UsuarioLogado() {
 		loginPage =  homePage.clicarBotaoSignIn();
@@ -65,6 +65,7 @@ public class HomePageTests extends BaseTests {
 		carregarPaginaInicial();
 	}
 	
+	ModalProdutoPage modalProdutoPage;
 	@Test
 	public void incluirProdutoNoCarrinho_ProdutoIncluidoComSucesso() {
 		String tamanhoProduto = "M";
@@ -117,6 +118,23 @@ public class HomePageTests extends BaseTests {
 		assertThat(modalProdutoPage.obterQuantidadeProduto(), is(Integer.toString(quantidadeProduto)));
 		assertThat(subtotal, is(subtotalCalculado));
 		assertThat(modalProdutoPage.obterDescricaoProduto().toUpperCase(), is(nomeProduto_ProdutoPage.toUpperCase()));
+		
+	}
+	
+	@Test
+	public void irParaCarrinho_InformacoesPersistidas() {
+		//Pré-condições:
+		//Produto incluido na tela ModalProdutoPage
+		incluirProdutoNoCarrinho_ProdutoIncluidoComSucesso();
+		
+		CarrinhoPage carrinhoPage = modalProdutoPage.clicarBotaoProceedToCheckout();
+		
+		//Teste
+		
+		
+		
+		//Validar todos os elementos da tela
+		
 		
 	}
 	

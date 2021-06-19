@@ -1,6 +1,7 @@
 package pages;
 
 import org.openqa.selenium.By;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -14,6 +15,7 @@ public class ModalProdutoPage {
 	private By precoProduto = By.cssSelector("div.col-md-6 p.product-price");
 	private By listaValoresInformados = By.cssSelector("div.divide-right .col-md-6:nth-child(2) span strong");
 	private By subtotal = By.cssSelector(".cart-content p:nth-child(2) span.value");
+	private By botaoProceedCheckout = By.cssSelector("div.cart-content-btn a.btn-primary");
 	
 	public ModalProdutoPage(WebDriver driver) {
 		this.driver = driver;
@@ -54,6 +56,11 @@ public class ModalProdutoPage {
 	
 	public String obterSubtotal() {
 		return driver.findElement(subtotal).getText();
+	}
+	
+	public CarrinhoPage clicarBotaoProceedToCheckout() {
+		driver.findElement(botaoProceedCheckout).click();
+		return new CarrinhoPage(driver);
 	}
 
 
