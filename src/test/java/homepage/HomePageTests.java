@@ -3,6 +3,7 @@ package homepage;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -10,8 +11,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import Util.Funcoes;
 import base.BaseTests;
 import pages.CarrinhoPage;
+import pages.CheckoutPage;
 import pages.LoginPage;
 import pages.ModalProdutoPage;
 import pages.ProdutoPage;
@@ -121,20 +124,104 @@ public class HomePageTests extends BaseTests {
 		
 	}
 	
+	//Valores esperados
+	String esperado_nomeProduto = "Hummingbird printed t-shirt";
+	Double esperado_precoProduto = 19.12;
+	String esperado_tamanhoProduto = "M";
+	String esperado_corProduto = "Black";
+	int esperado_input_quantidadeProduto = 2;
+	Double esperado_subtotalProduto = esperado_precoProduto * esperado_input_quantidadeProduto;
+	
+	int esperado_numeroItensTotal = esperado_input_quantidadeProduto;
+	Double esperado_subtotalTotal = esperado_subtotalProduto;
+	Double esperado_shippingTotal = 7.0;
+	Double esperado_totalTaxaExclTotal = esperado_subtotalTotal + esperado_shippingTotal;
+	Double esperado_totalTaxaIncTotal = esperado_totalTaxaExclTotal;
+	Double esperado_taxesTotal = 0.00;
+	
+	String esperado_nomeCliente = "Cassia Souza";
+	
+	CarrinhoPage carrinhoPage;
 	@Test
 	public void irParaCarrinho_InformacoesPersistidas() {
 		//Pré-condições:
 		//Produto incluido na tela ModalProdutoPage
 		incluirProdutoNoCarrinho_ProdutoIncluidoComSucesso();
 		
-		CarrinhoPage carrinhoPage = modalProdutoPage.clicarBotaoProceedToCheckout();
-		
+		carrinhoPage = modalProdutoPage.clicarBotaoProceedToCheckout();
 		//Teste
-		
-		
-		
 		//Validar todos os elementos da tela
+		System.out.println("*** TELA DO CARRINHO ***");
+		System.out.println(carrinhoPage.obter_nomeProduto());
+		System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_precoProduto()));
+		System.out.println(carrinhoPage.obter_tamanhoProduto());
+		System.out.println(carrinhoPage.obter_corProduto());
+		System.out.println(Funcoes.removeTextoItensDevolveInt(carrinhoPage.obter_input_quantidadeProduto()));
+		System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_subtotalProduto()));
 		
+		System.out.println("*** ITENS DE TOTAL ***");
+		System.out.println(Funcoes.removeTextoItensDevolveInt(carrinhoPage.obter_numeroItensTotal()));
+		System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_subtotalTotal()));
+		System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_shippingTotal()));
+		System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_totalTaxaExclTotal()));
+		System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_totalTaxaIncTotal()));
+		System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_taxesTotal()));
+		
+		//Asserções Hamcrest
+		//Tela do carrinho
+		assertThat(carrinhoPage.obter_nomeProduto(), is(esperado_nomeProduto));
+		assertThat(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_precoProduto()), is(esperado_precoProduto));
+		assertThat(carrinhoPage.obter_tamanhoProduto(), is(esperado_tamanhoProduto));
+		assertThat(carrinhoPage.obter_corProduto(), is(esperado_corProduto));
+		assertThat(Funcoes.removeTextoItensDevolveInt(carrinhoPage.obter_input_quantidadeProduto()), is(esperado_input_quantidadeProduto));
+		assertThat(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_subtotalProduto()), is(esperado_subtotalProduto));
+		//Itens de total
+		assertThat(Funcoes.removeTextoItensDevolveInt(carrinhoPage.obter_numeroItensTotal()), is(esperado_numeroItensTotal));
+		assertThat(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_subtotalTotal()), is(esperado_subtotalTotal));
+		assertThat(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_shippingTotal()), is(esperado_shippingTotal));
+		assertThat(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_totalTaxaExclTotal()), is(esperado_totalTaxaExclTotal));
+		assertThat(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_totalTaxaIncTotal()), is(esperado_totalTaxaIncTotal));
+		assertThat(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_taxesTotal()), is(esperado_taxesTotal));
+		
+	}
+	
+	CheckoutPage checkoutPage;
+	@Test
+	public void irParaCheckout_FreteMeioPagamentoEnderecoListadosOk() {
+		//Pré-condições
+		//Produto disponível no carrinho de compras
+		irParaCarrinho_InformacoesPersistidas();
+		
+		//Testes		
+		//Clicar no botão Proceed to checkout
+		checkoutPage = carrinhoPage.clicarBotaoProceedToCheckout();
+		
+		//Validar informações na tela
+		assertThat(Funcoes.removeCifraoDevolveDouble(checkoutPage.obter_totalTaxIncTotal()), is(esperado_totalTaxaIncTotal));
+		assertTrue(checkoutPage.obter_nomeCliente().startsWith(esperado_nomeCliente));
+		
+		checkoutPage.clicarBotaoContinueAddress();
+		
+		String encontrado_shippingValor = checkoutPage.obter_shippingValor();
+		encontrado_shippingValor = Funcoes.removeTexto(encontrado_shippingValor, " tax excl.");
+		Double encontrado_shippingValor_Double = Funcoes.removeCifraoDevolveDouble(encontrado_shippingValor); 
+		assertThat(encontrado_shippingValor_Double, is(esperado_shippingTotal));
+		
+		checkoutPage.clicarBotaoContinueShipping();
+		
+		//Selecionar opção Pay by Check
+		checkoutPage.selecionarRadioPayByCheck();
+		
+		//Validar valor do cheque (Amount)
+		String encontrado_amountPayByCheck = checkoutPage.obter_amountPayByCheck();
+		encontrado_amountPayByCheck = Funcoes.removeTexto(encontrado_amountPayByCheck, " (tax incl.)");
+		Double encontrado_amountPayByCheck_Double = Funcoes.removeCifraoDevolveDouble(encontrado_amountPayByCheck);
+		assertThat(encontrado_amountPayByCheck_Double, is(esperado_totalTaxaIncTotal));
+		
+		//Clicar na opção I agree
+		checkoutPage.selecionar_checkboxIAgree();
+		
+		assertTrue(checkoutPage.estaSelecionadoCheckboxIAgree());
 		
 	}
 	
