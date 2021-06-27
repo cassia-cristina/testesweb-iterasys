@@ -1,12 +1,15 @@
 package homepage;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 
 import Util.Funcoes;
 import base.BaseTests;
@@ -66,9 +69,34 @@ public class HomePageTests extends BaseTests {
 		carregarPaginaInicial();
 	}
 	
+	@ParameterizedTest
+	@CsvFileSource(resources = "/massaTeste_Login.csv", numLinesToSkip = 1, delimiter = ';')
+	public void testLogin_UsuarioLogadoComDadosValidos(String nomeTeste, String email, String password, String nomeUsuario, String resultado) {
+		
+		loginPage =  homePage.clicarBotaoSignIn();
+		loginPage.preencherEmail(email);
+		loginPage.preencherPassword(password);
+		loginPage.clicarBotaoSignIn();
+		
+		boolean esperado_loginOk;
+		if(resultado.equals("positivo"))
+			esperado_loginOk = true;
+		else
+			esperado_loginOk = false;
+		
+		assertThat(homePage.estarLogado(nomeUsuario), is(esperado_loginOk));
+		
+		capturarTela(nomeTeste, resultado);
+		
+		if(esperado_loginOk)
+			homePage.clicarBotaoSignOut();
+			carregarPaginaInicial();
+		
+	}
+	
 	ModalProdutoPage modalProdutoPage;
 	@Test
-	public void incluirProdutoNoCarrinho_ProdutoIncluidoComSucesso() {
+	public void testIncluirProdutoNoCarrinho_ProdutoIncluidoComSucesso() {
 		String tamanhoProduto = "M";
 		String corProduto = "Black";
 		int quantidadeProduto = 2;
@@ -141,10 +169,10 @@ public class HomePageTests extends BaseTests {
 	
 	CarrinhoPage carrinhoPage;
 	@Test
-	public void irParaCarrinho_InformacoesPersistidas() {
+	public void testIrParaCarrinho_InformacoesPersistidas() {
 		//Pré-condições:
 		//Produto incluido na tela ModalProdutoPage
-		incluirProdutoNoCarrinho_ProdutoIncluidoComSucesso();
+		testIncluirProdutoNoCarrinho_ProdutoIncluidoComSucesso();
 		
 		carrinhoPage = modalProdutoPage.clicarBotaoProceedToCheckout();
 		//Teste
@@ -185,10 +213,10 @@ public class HomePageTests extends BaseTests {
 	
 	CheckoutPage checkoutPage;
 	@Test
-	public void irParaCheckout_FreteMeioPagamentoEnderecoListadosOk() {
+	public void testIrParaCheckout_FreteMeioPagamentoEnderecoListadosOk() {
 		//Pré-condições
 		//Produto disponível no carrinho de compras
-		irParaCarrinho_InformacoesPersistidas();
+		testIrParaCarrinho_InformacoesPersistidas();
 		
 		//Testes		
 		//Clicar no botão Proceed to checkout
@@ -225,9 +253,9 @@ public class HomePageTests extends BaseTests {
 	
 	PedidoPage pedidoPage;
 	@Test
-	public void finalizarPedido_pedidoFinalizadoComSucesso() {
+	public void testFinalizarPedido_pedidoFinalizadoComSucesso() {
 		//Pré - condições: checkout concluído
-		irParaCheckout_FreteMeioPagamentoEnderecoListadosOk();
+		testIrParaCheckout_FreteMeioPagamentoEnderecoListadosOk();
 		
 		//Teste
 		//Cicar no botão confirmar pedido

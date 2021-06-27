@@ -1,0 +1,3 @@
+nomeTeste;email;password;nomeUsuario;resultado
+loginValido;cassia@teste.com;123456;Cassia Souza;positivo
+loginInvalido;cassia@teste.com;123457;Cassia Souza;negativo
