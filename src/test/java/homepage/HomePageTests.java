@@ -1,12 +1,9 @@
 package homepage;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
@@ -106,7 +103,7 @@ public class HomePageTests extends BaseTests {
 		Double subtotal;
 		Double subtotalCalculado;
 		
-		//Pré-condição: usuario logado
+		//Pre-condicao: usuario logado
 		if(!homePage.estarLogado("Cassia Souza")) {
 			testLoginComSucesso_UsuarioLogado();
 		}
@@ -115,12 +112,12 @@ public class HomePageTests extends BaseTests {
 		testValidarDetalhesDoProduto_DescricaoEValorIguais();
 		//Selecionando o tamanho
 		List<String> listaOpcoes = produtoPage.obterOpcoesSelecionadas();
-		System.out.println("Opção selecionada é: " + listaOpcoes.get(0));
+		System.out.println("OpÃ§Ã£o selecionada Ã©: " + listaOpcoes.get(0));
 		System.out.println("Tamanho da lista: " + listaOpcoes.size());
 		produtoPage.selecionarOpcaoDropDown(tamanhoProduto);
 		
 		listaOpcoes = produtoPage.obterOpcoesSelecionadas();
-		System.out.println("Opção selecionada é: " + listaOpcoes.get(0));
+		System.out.println("OpÃ§Ã£o selecionada Ã©: " + listaOpcoes.get(0));
 		System.out.println("Tamanho da lista: " + listaOpcoes.size());
 		
 		//Selecionando cor
@@ -130,7 +127,7 @@ public class HomePageTests extends BaseTests {
 		//Adicionando no carrinho
 		modalProdutoPage = produtoPage.clicarBotaoAddToCart();
 		
-		//Validações
+		//Validacoes
 		assertTrue(modalProdutoPage.obterMensagemProdutoAdicionado().endsWith("Product successfully added to your shopping cart"));
 		
 		precoProdutoString = modalProdutoPage.obterPrecoProduto();
@@ -170,7 +167,7 @@ public class HomePageTests extends BaseTests {
 	CarrinhoPage carrinhoPage;
 	@Test
 	public void testIrParaCarrinho_InformacoesPersistidas() {
-		//Pré-condições:
+		//Pre-condicoes:
 		//Produto incluido na tela ModalProdutoPage
 		testIncluirProdutoNoCarrinho_ProdutoIncluidoComSucesso();
 		
@@ -193,7 +190,7 @@ public class HomePageTests extends BaseTests {
 		System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_totalTaxaIncTotal()));
 		System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_taxesTotal()));
 		
-		//Asserções Hamcrest
+		//Assercoes Hamcrest
 		//Tela do carrinho
 		assertThat(carrinhoPage.obter_nomeProduto(), is(esperado_nomeProduto));
 		assertThat(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_precoProduto()), is(esperado_precoProduto));
@@ -214,15 +211,15 @@ public class HomePageTests extends BaseTests {
 	CheckoutPage checkoutPage;
 	@Test
 	public void testIrParaCheckout_FreteMeioPagamentoEnderecoListadosOk() {
-		//Pré-condições
-		//Produto disponível no carrinho de compras
+		//Pre - condicoes
+		//Produto disponï¿½vel no carrinho de compras
 		testIrParaCarrinho_InformacoesPersistidas();
 		
 		//Testes		
-		//Clicar no botão Proceed to checkout
+		//Clicar no botï¿½o Proceed to checkout
 		checkoutPage = carrinhoPage.clicarBotaoProceedToCheckout();
 		
-		//Validar informações na tela
+		//Validar informacoes na tela
 		assertThat(Funcoes.removeCifraoDevolveDouble(checkoutPage.obter_totalTaxIncTotal()), is(esperado_totalTaxaIncTotal));
 		assertTrue(checkoutPage.obter_nomeCliente().startsWith(esperado_nomeCliente));
 		
@@ -235,7 +232,7 @@ public class HomePageTests extends BaseTests {
 		
 		checkoutPage.clicarBotaoContinueShipping();
 		
-		//Selecionar opção Pay by Check
+		//Selecionar opcao Pay by Check
 		checkoutPage.selecionarRadioPayByCheck();
 		
 		//Validar valor do cheque (Amount)
@@ -244,7 +241,7 @@ public class HomePageTests extends BaseTests {
 		Double encontrado_amountPayByCheck_Double = Funcoes.removeCifraoDevolveDouble(encontrado_amountPayByCheck);
 		assertThat(encontrado_amountPayByCheck_Double, is(esperado_totalTaxaIncTotal));
 		
-		//Clicar na opção I agree
+		//Clicar na opcao I agree
 		checkoutPage.selecionar_checkboxIAgree();
 		
 		assertTrue(checkoutPage.estaSelecionadoCheckboxIAgree());
@@ -254,11 +251,11 @@ public class HomePageTests extends BaseTests {
 	PedidoPage pedidoPage;
 	@Test
 	public void testFinalizarPedido_pedidoFinalizadoComSucesso() {
-		//Pré - condições: checkout concluído
+		//Pre - condicoes: checkout concluido
 		testIrParaCheckout_FreteMeioPagamentoEnderecoListadosOk();
 		
 		//Teste
-		//Cicar no botão confirmar pedido
+		//Cicar no botao confirmar pedido
 		pedidoPage = checkoutPage.clicarBotaoConfirmaPedido();
 		//Validar valores da tela
 		assertTrue(pedidoPage.obter_textoPedidoConfirmado().endsWith("YOUR ORDER IS CONFIRMED"));

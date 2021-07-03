@@ -1,3 +1,3 @@
 # Curso Iterasys (IRTS)
 
-* Módulo Testes Web com Java/Selenium
+* Módulo Testes Web com Java/Selenium/Cucumber
